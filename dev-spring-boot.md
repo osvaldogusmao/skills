@@ -1,15 +1,16 @@
 ---
 name: dev-spring-boot
-description: "Convenções de desenvolvimento backend Java/Spring Boot usadas nos produtos NEXDOM (ex. RESSUS, NEXDOM DS) — Java 17, Spring Boot 2.7, organização por feature (package-by-feature), Spring Data JPA + QueryDSL sobre Oracle com migrações Flyway, REST e GraphQL lado a lado, Spring Cloud OpenFeign para integração com os microsserviços internos da plataforma (prefixo Z, ex. zworkspace, zstorage, zpermission, zlogin, zbff, zprinter, znotifica), RabbitMQ para eventos assíncronos, OAuth2, auditoria via z-audit-lib, e Checkstyle obrigatório no build. Use sempre que for implementar, revisar ou corrigir código backend Java desses produtos — mesmo que o pedido não mencione \"Spring Boot\" explicitamente, mas descreva um endpoint, uma regra de negócio, uma migração de banco ou uma integração com outro serviço da plataforma."
+description: "Convenções de desenvolvimento backend Java/Spring Boot usadas nos produtos NEXDOM (confirmado no RESSUS e no NEXDOM DS) — Java 17, Spring Boot 2.7, organização por feature (package-by-feature), Spring Data JPA + QueryDSL sobre Oracle com migrações Flyway, REST (e GraphQL quando o produto expõe), Spring Cloud OpenFeign para integração com os microsserviços internos da plataforma (prefixo Z, ex. zworkspace, zstorage, zpermission, zlogin, zbff, zprinter, znotifica, zdata), RabbitMQ para eventos assíncronos, OAuth2, auditoria via z-audit-lib, e Checkstyle obrigatório no build. Use sempre que for implementar, revisar ou corrigir código backend Java desses produtos — mesmo que o pedido não mencione \"Spring Boot\" explicitamente, mas descreva um endpoint, uma regra de negócio, uma migração de banco ou uma integração com outro serviço da plataforma."
 ---
 
 # Backend Java/Spring Boot — produtos NEXDOM
 
 ## Stack
 
-- Java 17, Spring Boot 2.7.x, build com Maven.
+- Java 17+, Spring Boot 2.7.x, build com Maven.
 - Persistência: Spring Data JPA + QueryDSL (queries type-safe complexas) sobre Oracle (driver `ojdbc10`); testes de repositório/integração usam H2 em memória.
-- API: REST e GraphQL convivem no mesmo serviço — GraphQL documentado em `src/main/resources/graphql/schemas.graphqls`; REST documentado com springdoc-openapi.
+- API: REST sempre; **alguns produtos** (confirmado no RESSUS) também expõem GraphQL lado a lado — verifique se existe `src/main/resources/graphql/schemas.graphqls` antes de assumir que o produto tem GraphQL (o NEXDOM DS, por exemplo, é só REST). REST é documentado com springdoc-openapi em ambos os casos.
+- Integrações específicas de produto (não universais, mas confirmadas em pelo menos um produto): geração de PDF (`pdfbox`), assinatura digital (`signer-client`, pacote `external/signer`) — não implemente PDF/assinatura na mão se essas libs já estiverem no `pom.xml` do projeto.
 - Mensageria: RabbitMQ (`spring-boot-starter-amqp`) para eventos assíncronos entre serviços.
 - Segurança: OAuth2 (`spring-security-oauth2-resource-server` + `spring-boot-starter-oauth2-client`) — nunca implemente autenticação/validação de token própria, sempre delegue ao Spring Security.
 - Integração entre serviços: Spring Cloud OpenFeign (`@FeignClient`) para chamar os demais microsserviços internos da plataforma.
@@ -44,7 +45,7 @@ Dois pacotes especiais, sempre presentes:
 
 ## Convenções de nomenclatura
 
-- `<Entidade>Controller` para REST; `<Entidade>GraphQLController` para GraphQL — o sufixo `GraphQLController` é obrigatório para diferenciar, nunca reaproveite o nome de um controller REST existente.
+- `<Entidade>Controller` para REST; `<Entidade>GraphQLController` para GraphQL, nos produtos que expõem GraphQL — o sufixo `GraphQLController` é obrigatório para diferenciar, nunca reaproveite o nome de um controller REST existente.
 - `<Entidade>Request` / `<Entidade>Response` para payloads (não `Dto` genérico quando já existe uma convenção de Request/Response no domínio).
 - `<Condição>Exception` para exceções de negócio (ex.: `AlegacaoAnsNuloException`, `VisualizacaoFiltroExistenteException`) — a exceção descreve a condição de erro, não a operação que falhou.
 - `<Entidade>Factory` para lógica de construção/transformação de entidades e DTOs.
@@ -58,5 +59,5 @@ Dois pacotes especiais, sempre presentes:
 ## Qualidade e build
 
 - O build falha se o Checkstyle reprovar (`maven-checkstyle-plugin` configurado) — rode `mvn checkstyle:check` (ou `mvn test`/`mvn package`, que já disparam o plugin) antes de finalizar, e corrija qualquer violação em vez de suprimir a regra.
-- Testes: JUnit 5 + Mockito (via `spring-boot-starter-test`) para unidade; H2 para testes de repositório; `spring-graphql-test` para testar resolvers GraphQL especificamente — não confunda os dois tipos de teste.
+- Testes: JUnit 5 + Mockito (via `spring-boot-starter-test`) para unidade; H2 para testes de repositório; `spring-graphql-test` para testar resolvers GraphQL, só nos produtos que tem GraphQL — não confunda os dois tipos de teste.
 - Nunca hardcode URL, usuário/senha ou token de outro serviço no código — sempre via `application.yml`/properties e variáveis de ambiente.
