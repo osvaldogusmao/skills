@@ -1,5 +1,5 @@
 ---
-name: dev-spring-boot
+name: nexdom-spring-boot-dev
 description: "Convenções de desenvolvimento backend Java/Spring Boot usadas nos produtos NEXDOM (confirmado no RESSUS e no NEXDOM DS) — Java 17, Spring Boot 2.7, organização por feature (package-by-feature), Spring Data JPA + QueryDSL sobre Oracle com migrações Flyway, REST (e GraphQL quando o produto expõe), Spring Cloud OpenFeign para integração com os microsserviços internos da plataforma (prefixo Z, ex. zworkspace, zstorage, zpermission, zlogin, zbff, zprinter, znotifica, zdata), RabbitMQ para eventos assíncronos, OAuth2, auditoria via z-audit-lib, e Checkstyle obrigatório no build. Use sempre que for implementar, revisar ou corrigir código backend Java desses produtos — mesmo que o pedido não mencione \"Spring Boot\" explicitamente, mas descreva um endpoint, uma regra de negócio, uma migração de banco ou uma integração com outro serviço da plataforma."
 ---
 
