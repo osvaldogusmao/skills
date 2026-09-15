@@ -1,5 +1,5 @@
 ---
-name: dev-vue2-microfrontend
+name: nexdom-vue-microfrontend-dev
 description: "Convenções de desenvolvimento frontend Vue 2 usadas nos produtos NEXDOM (ex. RESSUS, NEXDOM DS) — cada produto é um micro-frontend registrado via single-spa (single-spa-vue) dentro de um shell comum, com Vuex para estado, Vue Router, Vuetify 2 para componentes visuais, Tailwind para utilitários, bibliotecas internas @zitrus/* compartilhadas pelo shell, ESLint (airbnb) + Prettier, testes unitários com Jest e e2e com Cypress. Use sempre que for implementar, revisar ou corrigir código frontend Vue desses produtos — mesmo que o pedido não mencione \"single-spa\" ou \"micro-frontend\" explicitamente."
 ---
 
